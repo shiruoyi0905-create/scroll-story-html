@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vibe Coding 一个微信小程序 · 从零到上线</title>
+<style>
+:root{
+  --bg:#F3F7F4;
+  --paper:#FFFFFF;
+  --paper-2:#EBF2ED;
+  --ink:#1F2A22;
+  --ink-2:#4C5A50;
+  --ink-3:#8A9890;
+  --line:#DCE7E0;
+  --line-2:#E9F0EB;
+  --brand:#07C160;      /* 微信绿 */
+  --brand-2:#4FD68C;
+  --brand-soft:#D6F5E4;
+  --brand-tint:#EAFBF1;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"SF Pro Text","PingFang SC","Noto Sans SC",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.75;font-size:16px}
+h1,h2,h3{font-family:"SF Pro Display","PingFang SC",-apple-system,sans-serif;font-weight:600;letter-spacing:.3px;margin:0}
+h1{font-size:44px;line-height:1.2}
+h2{font-size:30px;line-height:1.28;margin-bottom:12px}
+h3{font-size:19px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 14px;color:var(--ink-2)}
+b{color:var(--ink);font-weight:600}
+em{color:var(--brand);font-style:normal;font-weight:600}
+.wrap{max-width:900px;margin:0 auto;padding:60px 28px 140px}
+.mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+
+.scene{padding:60px 0;border-bottom:1px dashed var(--line-2);position:relative}
+.scene:last-child{border-bottom:0}
+.chapter-tag{display:inline-block;font-size:11px;letter-spacing:4px;color:var(--brand);text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.narrator{color:var(--ink-3);font-size:13.5px;letter-spacing:.5px;margin-bottom:24px;font-style:italic}
+
+.bubble{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px 22px;margin:18px 0;font-size:15px;
+  box-shadow:0 20px 40px -30px rgba(20,60,35,.25);position:relative}
+.bubble.warm{background:var(--brand-tint);border-color:#BFEBD1;color:#125c34}
+.bubble.warm b{color:#0c4a29}
+
+.aha{background:linear-gradient(135deg,#EAFBF1 0,#DCF6E7 100%);border:1px solid #BFEBD1;border-radius:20px;
+  padding:22px 26px;margin:22px 0;font-size:15.5px;color:#12572f;position:relative;overflow:hidden}
+.aha::before{content:"AHA";position:absolute;top:14px;right:20px;font-size:11px;letter-spacing:4px;color:var(--brand);font-weight:700}
+.aha b{color:#0a3d20}
+
+.figure{margin:32px 0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:28px 24px;
+  box-shadow:0 20px 40px -30px rgba(20,60,35,.25)}
+.figure svg{width:100%;height:auto;display:block}
+.fig-caption{text-align:center;font-size:12.5px;color:var(--ink-3);letter-spacing:1.5px;margin-top:14px;text-transform:uppercase}
+
+.hero{padding:60px 0 40px;text-align:center;border-bottom:1px solid var(--line)}
+.hero .kicker{font-size:12px;letter-spacing:5px;color:var(--brand);text-transform:uppercase;margin-bottom:24px;font-weight:600}
+.hero h1{margin-bottom:20px}
+.hero p{max-width:660px;margin:0 auto;font-size:17px}
+.host{margin-top:32px;display:inline-flex;align-items:center;gap:14px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:13px;color:var(--ink-3)}
+.host span{width:8px;height:8px;background:var(--brand);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+.act-divider{margin:80px 0 20px;text-align:center;position:relative}
+.act-divider::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.act-divider .badge{position:relative;display:inline-block;padding:10px 24px;background:var(--bg);color:var(--brand);font-size:12px;letter-spacing:6px;font-weight:600;text-transform:uppercase}
+.act-title{text-align:center;margin:12px 0 40px}
+.act-title h2{font-size:34px;line-height:1.25}
+.act-title p{color:var(--ink-3);font-size:14px;margin-top:8px}
+
+.steps{list-style:none;padding:0;margin:18px 0}
+.steps li{position:relative;padding:10px 0 10px 34px;color:var(--ink-2);font-size:15px;border-bottom:1px solid var(--line-2)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:"";position:absolute;left:6px;top:18px;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+
+footer{text-align:center;padding:60px 0 0;color:var(--ink-3);font-size:12.5px;letter-spacing:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 开场 ============ -->
+<div class="hero">
+  <div class="kicker">A VIBE-CODING WALKTHROUGH</div>
+  <h1>Vibe Coding 一个<em>微信小程序</em></h1>
+  <p>不写一行代码你也能上手——难的从来不是写代码，是搞清楚"先做什么、后做什么"。这篇把整条路走一遍。</p>
+  <div class="host"><span></span>两幕 · 上手前想清楚 + 动手做出来</div>
+</div>
+
+<!-- ============ 场景 01 · 卡点 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 01</div>
+  <div class="narrator">场景一 · 周五晚上，小 Y 打开了微信开发者工具</div>
+  <h2>她卡住的地方，<em>根本不是写代码</em></h2>
+
+  <p>小 Y 是个产品经理，脑子里憋了个小程序点子很久了。她装好了微信开发者工具，让 AI 写了第一版代码，粘进去——然后就卡住了。<br/>
+  不是代码报错，是一连串她答不上来的问题：<b>要不要先注册？我没有营业执照能做吗？做完怎么让别人用上？</b></p>
+
+  <div class="bubble">
+    <p style="margin:0">Vibe coding 的真相是：<b>AI 能帮你写完 90% 的代码，但那条"从想法到上线"的流程，得你自己心里有数。</b><br/>
+    否则你会在第一步就卡住，代码写得再漂亮也发不出去。</p>
+  </div>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- 以为的路 -->
+      <text x="30" y="40" font-family="PingFang SC" font-size="13" fill="#8A9890" font-weight="600">她以为的路</text>
+      <g transform="translate(30,55)">
+        <rect width="150" height="46" rx="10" fill="#EBF2ED" stroke="#DCE7E0"/>
+        <text x="75" y="28" text-anchor="middle" font-family="PingFang SC" font-size="12" fill="#4C5A50">让 AI 写代码</text>
+      </g>
+      <path d="M 185 78 L 235 78" stroke="#8A9890" stroke-width="1.4" fill="none"/>
+      <path d="M 229 73 L 239 78 L 229 83" stroke="#8A9890" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <g transform="translate(240,55)">
+        <rect width="150" height="46" rx="10" fill="#07C160"/>
+        <text x="75" y="28" text-anchor="middle" font-family="PingFang SC" font-size="12" fill="#fff" font-weight="600">上线，完事</text>
+      </g>
+
+      <!-- 实际的路 -->
+      <text x="30" y="150" font-family="PingFang SC" font-size="13" fill="#07C160" font-weight="600">实际的路</text>
+      <g font-family="PingFang SC" font-size="10.5" fill="#4C5A50">
+        <g transform="translate(30,165)"><rect width="96" height="42" rx="9" fill="#FFFFFF" stroke="#DCE7E0"/><text x="48" y="20" text-anchor="middle">选主体</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#8A9890">个人/企业</text></g>
+        <g transform="translate(150,165)"><rect width="96" height="42" rx="9" fill="#FFFFFF" stroke="#DCE7E0"/><text x="48" y="20" text-anchor="middle">免注册跑</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#8A9890">测试号</text></g>
+        <g transform="translate(270,165)"><rect width="96" height="42" rx="9" fill="#FFFFFF" stroke="#DCE7E0"/><text x="48" y="20" text-anchor="middle">vibe 循环</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#8A9890">写+调</text></g>
+        <g transform="translate(390,165)"><rect width="96" height="42" rx="9" fill="#FFFFFF" stroke="#DCE7E0"/><text x="48" y="20" text-anchor="middle">避坑</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#8A9890">图片/真机</text></g>
+        <g transform="translate(510,165)"><rect width="96" height="42" rx="9" fill="#FFFFFF" stroke="#DCE7E0"/><text x="48" y="20" text-anchor="middle">注册主体</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#8A9890">真 AppID</text></g>
+        <g transform="translate(630,165)"><rect width="96" height="42" rx="9" fill="#07C160"/><text x="48" y="20" text-anchor="middle" fill="#fff" font-weight="600">审核发布</text><text x="48" y="34" text-anchor="middle" font-size="9" fill="#D6F5E4">上线</text></g>
+      </g>
+      <!-- connectors bottom -->
+      <g stroke="#07C160" stroke-width="1.3" fill="none">
+        <path d="M 127 186 L 149 186"/><path d="M 247 186 L 269 186"/><path d="M 367 186 L 389 186"/><path d="M 487 186 L 509 186"/><path d="M 607 186 L 629 186"/>
+      </g>
+    </svg>
+    <div class="fig-caption">同一件事 · 想象里两步 · 实际六步</div>
+  </div>
+</section>
+
+<!-- ============ ACT I ============ -->
+<div class="act-divider"><span class="badge">ACT I · 上手前先想清楚</span></div>
+<div class="act-title">
+  <h2>动手前的<em>三个决定</em></h2>
+  <p>选错了要返工。花十分钟想清楚，比写三小时代码值。</p>
+</div>
+
+<!-- ============ 场景 02 · 选主体 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 02 · 决定一</div>
+  <div class="narrator">场景二 · 第一个岔路口</div>
+  <h2>你是"个人"还是"企业"？——<em>这决定了你能做什么</em></h2>
+
+  <p>注册小程序要选主体，个人和企业是两条完全不同的路。小 Y 没有公司，只能走个人主体。<br/>
+  好消息是：<b>个人主体注册简单、审核宽松</b>。坏消息是——<em>个人主体不能碰"钱"</em>：不能开微信支付、不能做电商交易。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="PingFang SC">
+        <!-- 个人 -->
+        <g transform="translate(30,30)">
+          <rect width="350" height="240" rx="16" fill="#EAFBF1" stroke="#BFEBD1" stroke-width="1.5"/>
+          <text x="24" y="40" font-size="16" fill="#0a3d20" font-weight="600">个人主体</text>
+          <text x="24" y="62" font-size="11" fill="#12572f">你 · 一张身份证就能注册</text>
+          <line x1="24" y1="76" x2="326" y2="76" stroke="#BFEBD1"/>
+          <g font-size="12" fill="#12572f">
+            <text x="24" y="104">✓ 工具类（清单、计算器、打卡）</text>
+            <text x="24" y="130">✓ 内容类（攻略、图文、笔记）</text>
+            <text x="24" y="156">✓ 展示类（作品集、名片）</text>
+          </g>
+          <g font-size="12" fill="#b03a2e">
+            <text x="24" y="192">✗ 微信支付 / 交易下单</text>
+            <text x="24" y="218">✗ 电商卖货、收款</text>
+          </g>
+          <text x="24" y="242" font-size="10.5" fill="#8A9890">审核宽松 · 适合练手和验证点子</text>
+        </g>
+        <!-- 企业 -->
+        <g transform="translate(420,30)">
+          <rect width="350" height="240" rx="16" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <text x="24" y="40" font-size="16" fill="#1F2A22" font-weight="600">企业主体</text>
+          <text x="24" y="62" font-size="11" fill="#4C5A50">需营业执照 + 对公验证 · 收 300 元认证费</text>
+          <line x1="24" y1="76" x2="326" y2="76" stroke="#DCE7E0"/>
+          <g font-size="12" fill="#4C5A50">
+            <text x="24" y="104">✓ 个人能做的全都能做</text>
+            <text x="24" y="130">✓ 微信支付、交易、收款</text>
+            <text x="24" y="156">✓ 更多开放接口权限</text>
+          </g>
+          <g font-size="12" fill="#8A9890">
+            <text x="24" y="192">· 注册流程长、门槛高</text>
+            <text x="24" y="218">· 要有公司资质</text>
+          </g>
+          <text x="24" y="242" font-size="10.5" fill="#8A9890">想卖东西 / 做正经生意才需要</text>
+        </g>
+      </g>
+    </svg>
+    <div class="fig-caption">个人主体 = 不碰钱的一切 · 企业主体 = 想收款就得来</div>
+  </div>
+
+  <div class="aha">
+    <b>一句话判断 →</b><br/>
+    你的小程序<em>要不要在里面收钱</em>？不收 → 个人主体，今晚就能开工。<br/>
+    要收 → 得先注册企业主体，或者先用个人主体把体验做出来，等验证了再升级。
+  </div>
+</section>
+
+<!-- ============ 场景 03 · 免注册跑起来 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 03 · 决定二</div>
+  <div class="narrator">场景三 · 先别急着注册</div>
+  <h2>其实你<em>不注册也能先跑起来</em></h2>
+
+  <p>很多人卡在"注册"这一步就放弃了。但真相是——<b>写代码、本地预览这个阶段，根本不需要注册。</b><br/>
+  微信开发者工具允许用一个<em>测试号（游客 AppID）</em>先把项目跑起来，等做得差不多了、真要发布时再去注册换成真 AppID。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="PingFang SC" font-size="12">
+        <g transform="translate(30,70)">
+          <rect width="180" height="90" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <text x="90" y="34" text-anchor="middle" fill="#1F2A22" font-weight="600">project.config.json</text>
+          <rect x="20" y="48" width="140" height="26" rx="6" fill="#EAFBF1" stroke="#BFEBD1"/>
+          <text x="90" y="65" text-anchor="middle" font-family="SF Mono" font-size="11" fill="#12572f">appid: "touristappid"</text>
+        </g>
+        <path d="M 214 115 L 260 115" stroke="#07C160" stroke-width="1.5"/>
+        <path d="M 254 110 L 264 115 L 254 120" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <g transform="translate(270,55)">
+          <rect width="200" height="120" rx="14" fill="#EBF2ED" stroke="#DCE7E0"/>
+          <text x="100" y="30" text-anchor="middle" fill="#1F2A22" font-weight="600">微信开发者工具</text>
+          <text x="100" y="52" text-anchor="middle" font-size="10.5" fill="#8A9890">新建项目时选"测试号"</text>
+          <rect x="30" y="66" width="140" height="34" rx="8" fill="#07C160"/>
+          <text x="100" y="88" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">▶ 编译预览</text>
+        </g>
+        <path d="M 474 115 L 520 115" stroke="#07C160" stroke-width="1.5"/>
+        <path d="M 514 110 L 524 115 L 514 120" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- phone -->
+        <g transform="translate(540,40)">
+          <rect width="90" height="150" rx="16" fill="#FFFFFF" stroke="#1F2A22" stroke-width="1.4"/>
+          <rect x="14" y="20" width="62" height="90" rx="6" fill="#EAFBF1"/>
+          <text x="45" y="70" text-anchor="middle" font-size="10" fill="#12572f">你的小程序</text>
+          <circle cx="45" cy="128" r="7" fill="#EBF2ED"/>
+          <text x="45" y="146" text-anchor="middle" font-size="8" fill="#8A9890">模拟器 / 真机</text>
+        </g>
+        <text x="700" y="120" font-family="PingFang SC" font-size="11" fill="#8A9890">扫码可在</text>
+        <text x="700" y="136" font-family="PingFang SC" font-size="11" fill="#8A9890">自己手机上试</text>
+      </g>
+    </svg>
+    <div class="fig-caption">测试号 = 零门槛先跑起来 · 发布时再换真 AppID</div>
+  </div>
+
+  <div class="bubble warm">
+    <p style="margin:0"><b>这一步能救很多半途而废的人。</b><br/>
+    先用测试号把想法做出来、玩起来、给朋友看看——<em>验证值不值得做，再去走注册流程</em>。<br/>
+    别让"注册"这道行政门槛，挡住你验证点子的第一步。</p>
+  </div>
+</section>
+
+<!-- ============ ACT II ============ -->
+<div class="act-divider"><span class="badge">ACT II · 动手做出来</span></div>
+<div class="act-title">
+  <h2>真正的 <em>Vibe Coding</em> 循环</h2>
+  <p>从这里开始，你和 AI 一起把它写出来。</p>
+</div>
+
+<!-- ============ 场景 04 · 项目结构 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 04</div>
+  <div class="narrator">场景四 · 先认识这个"房子"的骨架</div>
+  <h2>小程序就是<em>几个页面 + 一张路由表</em></h2>
+
+  <p>让 AI 帮你之前，你得看懂它给你的东西。小程序的结构很简单：<b>一个 <span class="mono">app.json</span> 当总目录</b>，注册所有页面和底部 tab；<b>每个页面是一个文件夹</b>，里面四个文件各管一件事。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="SF Mono" font-size="12" fill="#4C5A50">
+        <!-- tree -->
+        <g transform="translate(40,40)">
+          <text y="0" fill="#1F2A22" font-weight="600">📁 我的小程序/</text>
+          <rect x="16" y="16" width="200" height="24" rx="5" fill="#EAFBF1" stroke="#BFEBD1"/>
+          <text x="26" y="33" fill="#12572f">app.json　总目录/路由</text>
+          <text x="26" y="62" fill="#8A9890">app.js　　全局逻辑</text>
+          <text x="26" y="86" fill="#8A9890">app.wxss　全局样式</text>
+
+          <text x="16" y="118" fill="#1F2A22" font-weight="600">📁 pages/</text>
+          <text x="36" y="146" fill="#4C5A50">📁 list/　（清单页）</text>
+          <text x="36" y="174" fill="#4C5A50">📁 checkin/（打卡页）</text>
+        </g>
+        <!-- page detail -->
+        <g transform="translate(430,50)" font-family="PingFang SC">
+          <rect width="330" height="200" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <text x="20" y="34" font-size="13" fill="#1F2A22" font-weight="600">一个页面 = 四个文件</text>
+          <line x1="20" y1="46" x2="310" y2="46" stroke="#DCE7E0"/>
+          <g font-size="12">
+            <text x="20" y="76"><tspan font-family="SF Mono" fill="#07C160">.wxml</tspan>　结构（相当于 HTML）</text>
+            <text x="20" y="106"><tspan font-family="SF Mono" fill="#07C160">.wxss</tspan>　样式（相当于 CSS）</text>
+            <text x="20" y="136"><tspan font-family="SF Mono" fill="#07C160">.js</tspan>　　逻辑（数据 + 交互）</text>
+            <text x="20" y="166"><tspan font-family="SF Mono" fill="#07C160">.json</tspan>　这个页的小配置</text>
+          </g>
+        </g>
+        <path d="M 250 150 Q 340 150 425 130" stroke="#8A9890" stroke-width="1.3" fill="none" stroke-dasharray="4 3"/>
+      </g>
+    </svg>
+    <div class="fig-caption">app.json 管全局 · 每个页面四件套 · 会 HTML/CSS 就能看懂七成</div>
+  </div>
+
+  <div class="aha">
+    <b>给 AI 下需求时的正确姿势 →</b><br/>
+    别说"帮我做个小程序"，太空。说清楚：<em>要几个页面、底部几个 tab、每个页面干什么</em>。<br/>
+    比如"两个 tab：清单页能添加待办、打卡页记录每天完成情况"——AI 就能一把搭好骨架。
+  </div>
+</section>
+
+<!-- ============ 场景 05 · vibe 循环 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 05</div>
+  <div class="narrator">场景五 · 真正开始 vibe</div>
+  <h2>循环起来：你说需求，AI 写，<em>但你得喂它"说明书"</em></h2>
+
+  <p>Vibe coding 不是一句话生成全部，是一个<b>你和 AI 来回对话的循环</b>。<br/>
+  这里有个关键坑：小程序的 <span class="mono">wx.</span> 系列接口有很多私有约定，<em>AI 很容易"一本正经地编"一个不存在的 API</em>。解法是——把官方文档贴给它。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#07C160"/>
+        </marker>
+      </defs>
+      <g font-family="PingFang SC" font-size="12">
+        <g transform="translate(300,30)">
+          <circle r="52" fill="#EAFBF1" stroke="#BFEBD1" stroke-width="1.5" cx="100" cy="52"/>
+          <text x="100" y="46" text-anchor="middle" fill="#12572f" font-weight="600">1. 你说需求</text>
+          <text x="100" y="66" text-anchor="middle" font-size="10" fill="#8A9890">"加个删除按钮"</text>
+        </g>
+        <g transform="translate(560,140)">
+          <circle r="52" fill="#EAFBF1" stroke="#BFEBD1" stroke-width="1.5" cx="52" cy="52"/>
+          <text x="52" y="46" text-anchor="middle" fill="#12572f" font-weight="600">2. AI 写代码</text>
+          <text x="52" y="66" text-anchor="middle" font-size="10" fill="#8A9890">生成 wxml/js</text>
+        </g>
+        <g transform="translate(300,250)">
+          <circle r="52" fill="#EAFBF1" stroke="#BFEBD1" stroke-width="1.5" cx="100" cy="42"/>
+          <text x="100" y="36" text-anchor="middle" fill="#12572f" font-weight="600">3. 编译看效果</text>
+          <text x="100" y="56" text-anchor="middle" font-size="10" fill="#8A9890">对 → 下一个需求</text>
+        </g>
+        <g transform="translate(30,140)">
+          <circle r="56" fill="#07C160" cx="56" cy="52"/>
+          <text x="56" y="44" text-anchor="middle" fill="#fff" font-weight="600">报错/不对</text>
+          <text x="56" y="64" text-anchor="middle" font-size="10" fill="#D6F5E4">贴官方文档给它</text>
+        </g>
+
+        <path d="M 452 82 Q 540 100 578 150" stroke="#07C160" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+        <path d="M 590 244 Q 540 280 452 285" stroke="#07C160" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+        <path d="M 300 292 Q 160 300 110 236" stroke="#07C160" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+        <path d="M 96 150 Q 160 70 300 78" stroke="#07C160" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+      </g>
+    </svg>
+    <div class="fig-caption">对话循环 · 卡住时不是骂 AI，是给它喂对文档</div>
+  </div>
+
+  <div class="bubble">
+    <p style="margin:0"><b>防幻觉三招：</b><br/>
+    · 用到某个 <span class="mono">wx.xxx</span> 接口时，把<em>微信官方文档那一页</em>复制给 AI；<br/>
+    · 让它<b>一次只改一个小功能</b>，改完编译验证再往下；<br/>
+    · 报错就把<em>控制台完整报错</em>原样贴回去，别自己转述。</p>
+  </div>
+</section>
+
+<!-- ============ 场景 06 · 数据打通 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 06</div>
+  <div class="narrator">场景六 · 让两个页面"记得住"东西</div>
+  <h2>没有服务器，数据靠<em>手机本地存储</em>打通</h2>
+
+  <p>个人主体、纯练手的小程序，最省事的做法是<b>不搭服务器</b>，数据直接存在用户手机本地。<br/>
+  微信提供了 <span class="mono">wx.setStorageSync</span> / <span class="mono">getStorageSync</span>：清单页存进去，打卡页在 <span class="mono">onShow</span> 时读出来——两个页面就打通了。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="PingFang SC" font-size="12">
+        <!-- page A -->
+        <g transform="translate(40,50)">
+          <rect width="200" height="140" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <text x="100" y="32" text-anchor="middle" fill="#1F2A22" font-weight="600">清单页</text>
+          <text x="100" y="54" text-anchor="middle" font-size="10.5" fill="#8A9890">用户添加一条待办</text>
+          <rect x="24" y="72" width="152" height="44" rx="8" fill="#EAFBF1" stroke="#BFEBD1"/>
+          <text x="100" y="90" text-anchor="middle" font-family="SF Mono" font-size="10" fill="#12572f">wx.setStorageSync</text>
+          <text x="100" y="106" text-anchor="middle" font-family="SF Mono" font-size="10" fill="#12572f">('todos', list)</text>
+        </g>
+        <!-- storage -->
+        <g transform="translate(300,55)">
+          <rect width="200" height="130" rx="14" fill="#07C160"/>
+          <text x="100" y="34" text-anchor="middle" fill="#fff" font-weight="600">手机本地存储</text>
+          <text x="100" y="56" text-anchor="middle" font-size="10.5" fill="#D6F5E4">key-value · 关机也在</text>
+          <rect x="30" y="72" width="140" height="40" rx="8" fill="#12572f"/>
+          <text x="100" y="96" text-anchor="middle" font-family="SF Mono" font-size="11" fill="#D6F5E4">"todos": [...]</text>
+        </g>
+        <!-- page B -->
+        <g transform="translate(560,50)">
+          <rect width="200" height="140" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <text x="100" y="32" text-anchor="middle" fill="#1F2A22" font-weight="600">打卡页</text>
+          <text x="100" y="54" text-anchor="middle" font-size="10.5" fill="#8A9890">onShow 时刷新</text>
+          <rect x="24" y="72" width="152" height="44" rx="8" fill="#EAFBF1" stroke="#BFEBD1"/>
+          <text x="100" y="90" text-anchor="middle" font-family="SF Mono" font-size="10" fill="#12572f">wx.getStorageSync</text>
+          <text x="100" y="106" text-anchor="middle" font-family="SF Mono" font-size="10" fill="#12572f">('todos')</text>
+        </g>
+
+        <path d="M 244 120 L 296 120" stroke="#07C160" stroke-width="1.6" fill="none"/>
+        <path d="M 290 115 L 300 120 L 290 125" stroke="#07C160" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="270" y="112" text-anchor="middle" font-size="9" fill="#8A9890">存</text>
+        <path d="M 504 120 L 556 120" stroke="#07C160" stroke-width="1.6" fill="none"/>
+        <path d="M 550 115 L 560 120 L 550 125" stroke="#07C160" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="530" y="112" text-anchor="middle" font-size="9" fill="#8A9890">取</text>
+      </g>
+    </svg>
+    <div class="fig-caption">存→取两个 API · 纯客户端 · 零服务器零门槛</div>
+  </div>
+
+  <div class="aha">
+    <b>什么时候才需要服务器？→</b><br/>
+    要<em>多人共享数据</em>（比如你发的内容别人也能看）、要<em>跨设备同步</em>时才需要。<br/>
+    练手、自用工具、单机清单这类，本地存储完全够——别一上来就给自己加难度。
+  </div>
+</section>
+
+<!-- ============ 场景 07 · 避坑 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 07</div>
+  <div class="narrator">场景七 · 前人踩过的三个坑</div>
+  <h2>这三个坑，<em>几乎每个新手都会踩一次</em></h2>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="PingFang SC" font-size="12">
+        <!-- pit 1 -->
+        <g transform="translate(30,30)">
+          <rect width="230" height="200" rx="16" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <circle cx="34" cy="40" r="16" fill="#EAFBF1"/><text x="34" y="45" text-anchor="middle" font-size="14" fill="#07C160" font-weight="700">1</text>
+          <text x="60" y="45" fill="#1F2A22" font-weight="600" font-size="13">图片不显示</text>
+          <text x="22" y="86" fill="#4C5A50" font-size="11.5">图片要么<b>打包进项目</b>，</text>
+          <text x="22" y="108" fill="#4C5A50" font-size="11.5">要么用<b>已备案的 HTTPS 图床</b>。</text>
+          <text x="22" y="138" fill="#b03a2e" font-size="11.5">✗ 别用带防盗链的外链</text>
+          <text x="22" y="158" fill="#8A9890" font-size="10.5">（小红书/微博图源会挂）</text>
+          <text x="22" y="186" fill="#8A9890" font-size="10.5">线上还要在后台配</text>
+          <text x="22" y="202" fill="#8A9890" font-size="10.5">合法域名白名单</text>
+        </g>
+        <!-- pit 2 -->
+        <g transform="translate(285,30)">
+          <rect width="230" height="200" rx="16" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <circle cx="34" cy="40" r="16" fill="#EAFBF1"/><text x="34" y="45" text-anchor="middle" font-size="14" fill="#07C160" font-weight="700">2</text>
+          <text x="60" y="45" fill="#1F2A22" font-weight="600" font-size="13">AI 编 API</text>
+          <text x="22" y="86" fill="#4C5A50" font-size="11.5">wx. 接口私有约定多，</text>
+          <text x="22" y="108" fill="#4C5A50" font-size="11.5">AI 会<b>一本正经地瞎编</b>。</text>
+          <text x="22" y="138" fill="#12572f" font-size="11.5">✓ 用到就贴官方文档</text>
+          <text x="22" y="158" fill="#8A9890" font-size="10.5">给它"说明书"再让它写</text>
+          <text x="22" y="186" fill="#8A9890" font-size="10.5">报错原样贴回，</text>
+          <text x="22" y="202" fill="#8A9890" font-size="10.5">别自己转述</text>
+        </g>
+        <!-- pit 3 -->
+        <g transform="translate(540,30)">
+          <rect width="230" height="200" rx="16" fill="#FFFFFF" stroke="#DCE7E0"/>
+          <circle cx="34" cy="40" r="16" fill="#EAFBF1"/><text x="34" y="45" text-anchor="middle" font-size="14" fill="#07C160" font-weight="700">3</text>
+          <text x="60" y="45" fill="#1F2A22" font-weight="600" font-size="13">模拟器正常，真机崩</text>
+          <text x="22" y="86" fill="#4C5A50" font-size="11.5">模拟器和真机<b>有差异</b>，</text>
+          <text x="22" y="108" fill="#4C5A50" font-size="11.5">尤其是存储、接口权限。</text>
+          <text x="22" y="138" fill="#12572f" font-size="11.5">✓ 早点用真机预览</text>
+          <text x="22" y="158" fill="#8A9890" font-size="10.5">别等全做完才在手机试</text>
+          <text x="22" y="186" fill="#8A9890" font-size="10.5">个人主体记住：</text>
+          <text x="22" y="202" fill="#8A9890" font-size="10.5">别写任何"支付/交易"</text>
+        </g>
+      </g>
+    </svg>
+    <div class="fig-caption">图片 · API 幻觉 · 真机差异 · 提前知道就绕过去了</div>
+  </div>
+</section>
+
+<!-- ============ 场景 08 · 上线 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 08</div>
+  <div class="narrator">场景八 · 做好了，怎么让别人用上</div>
+  <h2>最后一步：<em>注册 → 换真 AppID → 上传 → 审核 → 发布</em></h2>
+
+  <p>体验做得满意了，才轮到走发布流程。这时候再去注册主体、拿到真 AppID，换掉之前的测试号。</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 170" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="PingFang SC" font-size="11">
+        <g transform="translate(20,55)"><rect width="120" height="70" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/><text x="60" y="30" text-anchor="middle" font-size="10" fill="#07C160" font-weight="600">STEP 01</text><text x="60" y="50" text-anchor="middle" fill="#1F2A22">注册主体</text></g>
+        <path d="M 142 90 L 162 90" stroke="#07C160" stroke-width="1.5"/><path d="M 156 85 L 166 90 L 156 95" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(168,55)"><rect width="120" height="70" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/><text x="60" y="30" text-anchor="middle" font-size="10" fill="#07C160" font-weight="600">STEP 02</text><text x="60" y="50" text-anchor="middle" fill="#1F2A22">换真 AppID</text></g>
+        <path d="M 290 90 L 310 90" stroke="#07C160" stroke-width="1.5"/><path d="M 304 85 L 314 90 L 304 95" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(316,55)"><rect width="120" height="70" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/><text x="60" y="30" text-anchor="middle" font-size="10" fill="#07C160" font-weight="600">STEP 03</text><text x="60" y="50" text-anchor="middle" fill="#1F2A22">上传代码</text></g>
+        <path d="M 438 90 L 458 90" stroke="#07C160" stroke-width="1.5"/><path d="M 452 85 L 462 90 L 452 95" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(464,55)"><rect width="120" height="70" rx="14" fill="#FFFFFF" stroke="#DCE7E0"/><text x="60" y="30" text-anchor="middle" font-size="10" fill="#07C160" font-weight="600">STEP 04</text><text x="60" y="50" text-anchor="middle" fill="#1F2A22">提交审核</text></g>
+        <path d="M 586 90 L 606 90" stroke="#07C160" stroke-width="1.5"/><path d="M 600 85 L 610 90 L 600 95" stroke="#07C160" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(612,55)"><rect width="120" height="70" rx="14" fill="#07C160"/><text x="60" y="30" text-anchor="middle" font-size="10" fill="#D6F5E4" font-weight="600">STEP 05</text><text x="60" y="50" text-anchor="middle" fill="#fff" font-weight="600">发布上线</text></g>
+      </g>
+    </svg>
+    <div class="fig-caption">前四步在开发者工具/后台完成 · 审核多为 1-7 天</div>
+  </div>
+
+  <div class="bubble warm">
+    <p style="margin:0"><b>审核别踩红线：</b>个人主体如果代码里藏了支付、诱导分享、或做了不允许的类目，<em>会被直接驳回</em>。<br/>
+    提交前对照一遍类目要求，把不合规的功能先拿掉。</p>
+  </div>
+</section>
+
+<!-- ============ 收尾 ============ -->
+<section class="scene">
+  <div class="chapter-tag">SCENE 09</div>
+  <div class="narrator">场景九 · 收成三句话</div>
+  <h2>所以，vibe coding 一个小程序，<em>其实就这几件事</em></h2>
+
+  <div class="aha" style="margin-top:24px">
+    <b>把整条路收成三句话：</b><br/><br/>
+    <b>1.</b> 上手前先做<em>三个决定</em>——个人还是企业主体、要不要收钱、先用测试号免注册跑起来。<br/><br/>
+    <b>2.</b> Vibe coding 是<em>你和 AI 的对话循环</em>——说清需求、一次改一点、卡住就喂它官方文档，而不是指望一句话生成全部。<br/><br/>
+    <b>3.</b> 难的不是代码，是流程和避坑。<em>先验证点子，满意了再走注册和发布</em>——别让行政门槛挡在第一步。
+  </div>
+</section>
+
+<footer>Vibe Coding 微信小程序 · 从想法到上线 · QoderWork</footer>
+
+</div>
+</body>
+</html>

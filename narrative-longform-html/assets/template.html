@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>模板 · 叙事长图文</title>
+<style>
+/* ============================================================
+   1. 设计变量 —— 全篇灵魂，只改这里就能换整套配色
+   规则：墨色分三级 + 品牌色只点缀。想换主题就换 --brand
+   ============================================================ */
+:root{
+  --bg:#FAF7F2;        /* 纸底：不用纯白 */
+  --paper:#FFFDF8;     /* 卡片底 */
+  --paper-2:#F4EEE2;   /* 更深的底/占位块 */
+  --ink:#2A2622;       /* 正文墨色：不用纯黑 */
+  --ink-2:#5C544C;     /* 次要文字 */
+  --ink-3:#8B7F72;     /* 最弱：图注/旁白 */
+  --line:#E7DFD3;      /* 描边线 */
+  --line-2:#EFE9DE;    /* 更浅的分隔线 */
+  --brand:#FF6B3D;     /* 品牌色：只点缀关键处，绝不铺大面积 */
+  --brand-2:#FF9F73;
+  --brand-soft:#FFE7DC;
+  --brand-tint:#FFF3EC;
+}
+
+/* ============================================================
+   2. 基础排版 —— 单栏窄容器 + 留白 + 字号分级
+   ============================================================ */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"SF Pro Text","PingFang SC","Noto Sans SC",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.75;font-size:16px}
+h1,h2,h3{font-family:"SF Pro Display","PingFang SC",-apple-system,sans-serif;font-weight:600;letter-spacing:.3px;margin:0}
+h1{font-size:44px;line-height:1.2}
+h2{font-size:30px;line-height:1.25;margin-bottom:12px}
+h3{font-size:19px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 14px;color:var(--ink-2)}
+b{color:var(--ink);font-weight:600}          /* 加粗只加深不变色 */
+em{color:var(--brand);font-style:normal;font-weight:600}  /* em 当橙色强调，不斜体 */
+.wrap{max-width:900px;margin:0 auto;padding:60px 28px 140px}  /* 窄容器逼出留白 */
+.mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+
+/* ============================================================
+   3. 组件 —— 复用这几个 class 就够搭全篇
+   ============================================================ */
+
+/* 3.1 章节块 */
+.scene{padding:60px 0;border-bottom:1px dashed var(--line-2);position:relative}
+.scene:last-child{border-bottom:0}
+.chapter-tag{display:inline-block;font-size:11px;letter-spacing:4px;color:var(--brand);text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.narrator{color:var(--ink-3);font-size:13.5px;letter-spacing:.5px;margin-bottom:24px;font-style:italic}
+
+/* 3.2 对话气泡 —— 讲人话、举例子 */
+.bubble{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px 22px;margin:18px 0;font-size:15px;
+  box-shadow:0 20px 40px -30px rgba(60,40,20,.2);position:relative}  /* 大模糊+负扩散=高级悬浮感 */
+.bubble.warm{background:var(--brand-tint);border-color:#F3D5C4;color:#6b2f13}
+.bubble.warm b{color:#5a2a12}
+
+/* 3.3 顿悟框 —— 放金句/关键洞察，右上角印 AHA */
+.aha{background:linear-gradient(135deg,#FFF6F1 0,#FFEDE1 100%);border:1px solid #F3D5C4;border-radius:20px;
+  padding:22px 26px;margin:22px 0;font-size:15.5px;color:#5a2a12;position:relative;overflow:hidden}
+.aha::before{content:"AHA";position:absolute;top:14px;right:20px;font-size:11px;letter-spacing:4px;color:var(--brand);font-weight:700}
+.aha b{color:#3d1808}
+
+/* 3.4 图卡 —— 白底圆角包住 SVG */
+.figure{margin:32px 0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:28px 24px;
+  box-shadow:0 20px 40px -30px rgba(60,40,20,.2)}
+.figure svg{width:100%;height:auto;display:block}
+.fig-caption{text-align:center;font-size:12.5px;color:var(--ink-3);letter-spacing:1.5px;margin-top:14px;text-transform:uppercase}
+
+/* 3.5 开场 Hero */
+.hero{padding:60px 0 40px;text-align:center;border-bottom:1px solid var(--line)}
+.hero .kicker{font-size:12px;letter-spacing:5px;color:var(--brand);text-transform:uppercase;margin-bottom:24px;font-weight:600}
+.hero h1{margin-bottom:20px}
+.hero p{max-width:640px;margin:0 auto;font-size:17px}
+.host{margin-top:32px;display:inline-flex;align-items:center;gap:14px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:13px;color:var(--ink-3)}
+.host span{width:8px;height:8px;background:var(--brand);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* 3.6 幕/篇 分隔 */
+.act-divider{margin:80px 0 20px;text-align:center;position:relative}
+.act-divider::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.act-divider .badge{position:relative;display:inline-block;padding:10px 24px;background:var(--bg);color:var(--brand);font-size:12px;letter-spacing:6px;font-weight:600;text-transform:uppercase}
+.act-title{text-align:center;margin:12px 0 40px}
+.act-title h2{font-size:34px;line-height:1.25}
+.act-title p{color:var(--ink-3);font-size:14px;margin-top:8px}
+
+footer{text-align:center;padding:60px 0 0;color:var(--ink-3);font-size:12.5px;letter-spacing:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ 开场 ============ -->
+  <div class="hero">
+    <div class="kicker">KICKER · 一句英文小标</div>
+    <h1>大标题里可以塞一个<em>橙色强调词</em></h1>
+    <p>副标题：用一句话说清这篇要讲什么、给谁看。</p>
+    <div class="host"><span></span>副信息 · 呼吸点表示"进行中"</div>
+  </div>
+
+  <!-- ============ 场景模板（复制这一整块做新章节）============ -->
+  <section class="scene">
+    <div class="chapter-tag">SCENE 01</div>
+    <div class="narrator">旁白 · 用一句场景描述带入</div>
+    <h2>标题写<em>一句带钩子的话</em>，不要干名词</h2>
+
+    <p>正文段落。关键词用 <b>加粗</b>，最关键的用 <em>橙色强调</em>。讲人话、多举例。</p>
+
+    <!-- 对话气泡：把抽象概念翻译成大白话 -->
+    <div class="bubble">
+      <p style="margin:0">气泡里放"讲人话"的解释或举例，降低阅读门槛。</p>
+    </div>
+
+    <!-- 图卡 + 手写 SVG 示意图 -->
+    <div class="figure">
+      <svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- 卡片：圆角矩形 -->
+        <g transform="translate(40,60)">
+          <rect width="160" height="120" rx="14" fill="#FFFDF8" stroke="#E7DFD3"/>
+          <rect x="20" y="20" width="120" height="50" rx="8" fill="#F5CBB2"/>
+          <text x="80" y="98" text-anchor="middle" font-family="PingFang SC" font-size="13" fill="#2A2622" font-weight="600">节点 A</text>
+        </g>
+        <!-- 箭头：一条线 + 一个尖 -->
+        <path d="M 210 120 L 300 120" stroke="#FF6B3D" stroke-width="1.6" fill="none"/>
+        <path d="M 293 114 L 303 120 L 293 126" stroke="#FF6B3D" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- 高亮卡片：用品牌色 -->
+        <g transform="translate(310,60)">
+          <rect width="160" height="120" rx="14" fill="#FFF6F1" stroke="#F3D5C4"/>
+          <circle cx="80" cy="46" r="22" fill="#FF6B3D"/>
+          <text x="80" y="98" text-anchor="middle" font-family="PingFang SC" font-size="13" fill="#7a2e12" font-weight="600">节点 B</text>
+        </g>
+        <path d="M 480 120 L 570 120" stroke="#FF6B3D" stroke-width="1.6" fill="none"/>
+        <path d="M 563 114 L 573 120 L 563 126" stroke="#FF6B3D" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- 结果块 -->
+        <g transform="translate(580,60)">
+          <rect width="180" height="120" rx="14" fill="#FF6B3D"/>
+          <text x="90" y="66" text-anchor="middle" font-family="PingFang SC" font-size="14" fill="#fff" font-weight="600">结果</text>
+        </g>
+      </svg>
+      <div class="fig-caption">图注 · 一句话点明这张图在说什么</div>
+    </div>
+
+    <!-- 顿悟框：放本章金句 / 给读者的核心洞察 -->
+    <div class="aha">
+      <b>核心洞察放这里 →</b><br/>
+      用一两句话把本章最想让人记住的点拎出来，可以用 <em>橙色</em> 收尾。
+    </div>
+  </section>
+
+  <!-- ============ 幕/篇 分隔（长文分两幕时用）============ -->
+  <div class="act-divider"><span class="badge">ACT II · 第二幕</span></div>
+  <div class="act-title">
+    <h2>第二幕的<em>总起标题</em></h2>
+    <p>一句话说明第二幕讲什么。</p>
+  </div>
+
+  <!-- 继续复制 .scene 块…… -->
+
+  <footer>结尾 · 署名 · 日期</footer>
+
+</div>
+</body>
+</html>
