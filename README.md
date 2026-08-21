@@ -11,6 +11,12 @@ Zero-dependency, single-file HTML storytelling. Turn any complex topic into a be
 </p>
 
 <p align="center">
+  <a href="https://shiruoyi0905-create.github.io/scroll-story-html/"><strong>Live Demo · 在线体验</strong></a>
+  &nbsp;·&nbsp;
+  <a href="narrative-longform-html/assets/template.html"><strong>View Template · 查看模板</strong></a>
+</p>
+
+<p align="center">
   <img src="assets/scroll-story-demo.gif" width="752" alt="Scroll Story HTML demo — a WeChat Mini Program SOP told as a scrolling narrative"/>
 </p>
 
