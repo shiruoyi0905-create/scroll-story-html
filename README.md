@@ -10,6 +10,12 @@ Zero-dependency, single-file HTML storytelling. Turn any complex topic into a be
   <img src="https://img.shields.io/badge/SVG-hand--written-orange" alt="hand-written SVG"/>
 </p>
 
+<p align="center">
+  <img src="assets/scroll-story-demo.gif" width="752" alt="Scroll Story HTML demo — a WeChat Mini Program SOP told as a scrolling narrative"/>
+</p>
+
+<p align="center"><em>A real example: turning a WeChat Mini Program SOP into a scroll story.<br/>真实示例：把微信小程序开发 SOP 讲成一个可滚动阅读的故事。</em></p>
+
 ---
 
 ## What is this?
