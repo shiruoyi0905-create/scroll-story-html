@@ -59,6 +59,20 @@ When you need to explain how something works — a recommendation algorithm, an 
 
 适合用来讲解算法、产品机制、技术架构、操作流程和教程等需要“真正看懂”、而不只是快速扫读的内容。
 
+## Good Fit / 适合什么
+
+- Product mechanisms, technical architecture, algorithms, SOPs, tutorials, and research explainers
+- 内容需要按顺序理解，而不是只查一个答案
+- You want a polished artifact that can be shared as one `.html` file
+- 需要让 AI Agent 在明确的方法和视觉约束下协助创作
+
+## Not a Fit / 不适合什么
+
+- Application dashboards, forms, or state-heavy product interfaces
+- 需要实时协作、后台数据或账号系统的产品
+- Animation-first campaign sites that require WebGL, video scrubbing, or complex timelines
+- 只需要几页结论、用于现场决策的演示文稿
+
 ## Design Principles
 
 **Three pillars make it beautiful:**
@@ -79,6 +93,23 @@ cp narrative-longform-html/assets/template.html my-story.html
 # 3. Edit / 修改品牌色并填写场景内容
 #    Open in any browser to preview / 用浏览器直接预览
 open my-story.html
+```
+
+### Use with an AI coding agent / 交给 AI Agent
+
+Point your coding agent to [`narrative-longform-html/SKILL.md`](narrative-longform-html/SKILL.md), provide the source material, and use a prompt like:
+
+```text
+Follow narrative-longform-html/SKILL.md and turn this material into a
+self-contained scroll story for non-expert readers. Write the narrative arc
+before editing HTML, reuse the template, and verify every checklist item.
+```
+
+中文提示词：
+
+```text
+请严格按照 narrative-longform-html/SKILL.md，把这份材料改写成面向非专业读者的
+单文件滚动叙事页。先写故事线，再修改模板；完成后逐项执行自检清单。
 ```
 
 ### Customize the theme in 1 line:
@@ -145,4 +176,10 @@ The `SKILL.md` file contains the complete methodology for AI assistants to gener
 
 ## License
 
-MIT
+[MIT](LICENSE)
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the local workflow and pull-request checklist. Bugs and reusable story-pattern ideas can be submitted through the repository's issue templates.
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and [documentation/architecture.md](documentation/architecture.md) for the technical and operational map.
